@@ -32,7 +32,7 @@ int lever = 0;
 int crossings = 0;
 int steplevel = 0;
 int stepindex = 0;
-int delays[] = {30, 20, 10, 5, 1};
+int delays[] = {30, 20, 10, 5, 1, 1, 1, 1};
 int threshold = -1;
 
 void setup() {
@@ -66,10 +66,6 @@ void setup() {
   lcd.setCursor(0, 1);
   lcd.print("Please press R");
 
-  /*
-   *     Serial.begin(9600);
-    Serial.print(stage);
-   */
 }
 
 void loop() {
@@ -126,6 +122,7 @@ void loop() {
   if(digitalRead(M_button) == LOW){
     delay(lag);
     digitalWrite(LED5, LOW);
+    delay(150);
   }
 
   //familiar -> testing
@@ -200,8 +197,7 @@ void loop() {
         }
       }
     }
-
-    if(lag == lagLow){
+    else if(lag == lagLow){
       if(lagLow < delays[steplevel]){
         lagLow = 1;
         steplevel++;
@@ -261,8 +257,7 @@ void loop() {
           stepindex++;
         }
     }
-
-    if(lag == lagLow){
+    else if(lag == lagLow){
       if((lagLow + delays[stepindex]) > lagHigh){
         int temp = lagHigh;
         lagHigh = lagLow + delays[stepindex];
@@ -314,15 +309,6 @@ void loop() {
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Is there delay?");
-    /*
-    lcd.setCursor(0,1);
-    lcd.print("db: ");
-    lcd.print(delays[stepindex]);
-    lcd.print(" ");
-    lcd.print(lagLow);
-    lcd.print("   ");
-    lcd.print(lagHigh);
-    */
   } 
 
   //verify -> complete
@@ -339,7 +325,13 @@ void loop() {
     if(steplevel == 190){
       lcd.print("*");
     }
+    //inf loop to make it not able to move on from here
+    while(true){
+      ammo = false;
+    }
   }
+
+  
 
 }
 
@@ -366,4 +358,3 @@ void fire() {
   tone(laser, 1000, 1000);
   noTone(laser);
 }
-
