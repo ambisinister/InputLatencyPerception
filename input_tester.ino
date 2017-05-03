@@ -70,13 +70,25 @@ void setup() {
 
 void loop() {
 
+  //error catch
+  if(lagLow < 0){
+    lagLow = 1;
+  }
+  if(lagHigh < 0){
+    lagHigh = 2;
+  }
+
   //pevent multiple inputs
   if(digitalRead(L_button) == HIGH || digitalRead(M_button) == HIGH || digitalRead(R_button) == HIGH){
     button_pressed == true;
   }
   if(digitalRead(L_button) == LOW && digitalRead(M_button) == LOW && digitalRead(R_button) == LOW){
     button_pressed == false;
-    ammo = true;
+    if(ammo == false){
+      //digitalWrite(LED5, LOW);
+      //delay(250);
+      ammo = true;
+    }
   }
 
   //debug
@@ -90,7 +102,9 @@ void loop() {
     if(steplevel == 190){
       lcd.print("*");
     }
-    lcd.print("   C: ");
+    lcd.print(" T:");
+    lcd.print(steplevel);
+    lcd.print(" C:");
     lcd.print(crossings);
   }
 
@@ -122,7 +136,6 @@ void loop() {
   if(digitalRead(M_button) == LOW){
     delay(lag);
     digitalWrite(LED5, LOW);
-    delay(150);
   }
 
   //familiar -> testing
@@ -312,7 +325,7 @@ void loop() {
   } 
 
   //verify -> complete
-  if((digitalRead(R_button) == HIGH && stage == verify && ammo == true && verified == true && crossings >= 5) || steplevel == 190){
+  if((digitalRead(R_button) == HIGH && stage == verify && ammo == true && verified == true && crossings >= 5) || steplevel == 190 || lagHigh > 325){
     stage = complete;
     threshold = lag;
     lcd.clear();
@@ -325,9 +338,27 @@ void loop() {
     if(steplevel == 190){
       lcd.print("*");
     }
+    if(lagHigh > 325){
+      lcd.print("++");
+    }
     //inf loop to make it not able to move on from here
     while(true){
       ammo = false;
+      if(digitalRead(L_button) == HIGH && digitalRead(M_button) == HIGH && digitalRead(R_button) == HIGH){
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Debug Override");
+        lcd.setCursor(0, 1);
+        lcd.print((lagHigh + lagLow)/2);
+        lcd.print("ms");
+        if(steplevel == 190){
+          lcd.print("*");
+        }
+        lcd.print(" C:");
+        lcd.print(crossings);
+        lcd.print(" T:");
+        lcd.print(steplevel);
+      }
     }
   }
 
